@@ -1,0 +1,73 @@
+body {
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+  background: #f7f8fc;
+  color: #202638;
+}
+.app {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  text-align: center;
+}
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+.input-row { width: min(100%, 520px); display: flex; gap: 12px; }
+#numberInput {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #b7bdca;
+  border-radius: 10px;
+  background: white;
+}
+#checkButton {
+  flex: none;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+  background: #3949ab;
+  cursor: pointer;
+}
+#checkButton:hover { background: #283593; }
+
+/* 【大きな変更】共通の結果表示領域。文字サイズは各クラスに任せる。 */
+#result {
+  min-height: 3em;
+  text-align: center;
+}
+
+/* 注意文・通常の判定結果は、常に標準サイズで表示する。 */
+#result.result-normal {
+  width: min(100%, 90vw);
+  max-width: 90vw;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* 【大きな変更】素数発見時だけ横幅を文字列に合わせて拡張する。
+   長い2行目も途中で折り返さず、左右均等にはみ出させる。 */
+#result.result-prime {
+  position: relative;
+  left: 50%;
+  translate: -50% 0;
+  align-self: flex-start;
+  width: max-content;
+  max-width: none;
+  white-space: pre;
+  overflow-wrap: normal;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.result-prime .prime-number {
+  font-size: 1.2em;
+}
+@media (max-width: 480px) {
+  .input-row { flex-direction: column; }
+}
