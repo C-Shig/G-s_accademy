@@ -1,4 +1,3 @@
-
 // 【変更】クリックとEnterのイベント登録を1か所にまとめる。
 // 記法について要勉強
 $(function () {
@@ -232,7 +231,7 @@ function loadCollection() {
 // 【追加】保存できない設定でも判定自体は続けられるようにする。
 function saveCollection() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...discoveredPrimes]));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...discoveredPrimes].sort((a, b) => a - b)));
   } catch (error) {
     console.warn("コレクションを保存できませんでした", error);
     $("#collectionStatus").text("このブラウザでは保存できませんでした。再読み込みすると記録が消える可能性があります。");
@@ -250,18 +249,17 @@ function addPrime(number) {
   if (!Number.isSafeInteger(number) || number < 2 || !isPrime(number)) return;
   if (discoveredPrimes.has(number)) return;
 
-  const previousAchievements = checkAchievements();
+  // 【変更】登録前後のバッジIDを比較し、新規獲得分だけ通知する。
+  const before = new Set(checkAchievements().map(a => a.id));
   discoveredPrimes.add(number);
   saveCollection();
   renderCollection();
-  renderAchievements();
-
-  const currentAchievements = checkAchievements();
-  const unlocked = ACHIEVEMENTS.filter(a => !previousAchievements[a.id] && currentAchievements[a.id]);
+  const after = checkAchievements();
+  renderAchievements(after);
+  const unlocked = after.filter(a => !before.has(a.id));
   if (unlocked.length) {
     $("#achievementNotice")
-      .stop(true, true)
-      .hide()
+      .stop(true, true).hide()
       .text("🏆 Achievement Unlocked! " + unlocked.map(a => a.title).join(" / "))
       .fadeIn(300);
   } else {
@@ -278,37 +276,137 @@ function renderCollection() {
   primes.forEach(n => $list.append($("<li>").addClass("prime-chip").text(n)));
 }
 
-// 【追加】Achievementは保存せず、コレクションから毎回計算する。
-// これにより保存データの不整合を防ぐ。
-const ACHIEVEMENTS = [
-  { id: "first", title: "FIRST PRIME", description: "素数を初めて発見" },
-  { id: "single", title: "SINGLE DIGIT MASTER", description: "2・3・5・7をすべて発見" },
-  { id: "collector", title: "PRIME COLLECTOR", description: "異なる素数を10個発見" },
-  { id: "twin", title: "TWIN PRIME HUNTER", description: "差が2の素数ペアを発見" }
-];
+// ============================================================
+// 【大きな変更】Achievement v1：コレクションから動的にバッジを生成する。
+// 既存の入力解析・素数判定には手を加えない。
+// ============================================================
 
-function checkAchievements() {
-  return {
-    first: discoveredPrimes.size >= 1,
-    single: FIRST_DIGIT_PRIMES.every(n => discoveredPrimes.has(n)),
-    collector: discoveredPrimes.size >= 10,
-    twin: [...discoveredPrimes].some(n => discoveredPrimes.has(n + 2))
-  };
+// 【拡張箇所】4桁を追加する場合は MAX_COMPLETE_DIGITS を4に変更。
+// 4桁の素数は1061個あるため、描画・判定時間も検証すること。
+const MAX_COMPLETE_DIGITS = 3;
+
+// 1〜3桁の全素数を、既存のisPrime()を使って一度だけ生成する。
+const PRIMES_BY_DIGITS = new Map();
+for (let digits = 1; digits <= MAX_COMPLETE_DIGITS; digits++) {
+  const start = digits === 1 ? 2 : 10 ** (digits - 1);
+  const end = 10 ** digits;
+  const primes = [];
+  for (let n = start; n < end; n++) if (isPrime(n)) primes.push(n);
+  PRIMES_BY_DIGITS.set(digits, primes);
 }
 
-function renderAchievements() {
-  const achieved = checkAchievements();
+function isPalindromePrime(n) {
+  const text = String(n);
+  return text === [...text].reverse().join("");
+}
+
+// Emirp: 数字を逆順にした別の数も素数（回文素数は除外）。
+// 逆順の数がコレクションに存在する必要はない。
+function isEmirp(n) {
+  const reversed = Number([...String(n)].reverse().join(""));
+  return Number.isSafeInteger(reversed) && reversed !== n && isPrime(reversed);
+}
+
+// メルセンヌ素数：素数nについて、n+1が2の整数乗かを除算で検査。
+// Numberの安全整数範囲を越える場合は将来BigIntで対応する。
+function isMersennePrime(n) {
+  if (!Number.isSafeInteger(n) || !Number.isSafeInteger(n + 1)) return false;
+  let value = n + 1;
+  if (value < 2) return false;
+  while (value % 2 === 0) value /= 2;
+  return value === 1;
+}
+
+// パターンに一致する全ての素数が「発見済み」の場合に1組と数える。
+// 素数三つ子は(3,5,7)の特例と(p,p+2,p+6)/(p,p+4,p+6)。
+// 共有する素数があっても異なる組はそれぞれカウントする。
+function countPrimeGroups(primes, offsets) {
+  let count = 0;
+  for (const n of primes) {
+    if (offsets.every(offset => discoveredPrimes.has(n + offset))) count++;
+  }
+  return count;
+}
+
+function countTriplets(primes) {
+  const groups = new Set();
+  for (const n of primes) {
+    for (const offsets of [[0, 2, 6], [0, 4, 6]]) {
+      if (offsets.every(d => discoveredPrimes.has(n + d))) {
+        groups.add(offsets.map(d => n + d).join(","));
+      }
+    }
+  }
+  if ([3, 5, 7].every(n => discoveredPrimes.has(n))) groups.add("3,5,7");
+  return groups.size;
+}
+
+function badge(id, title, description, icon, number, category) {
+  return { id, title, description, icon, number: String(number), category };
+}
+
+// 【変更】達成済みの実績だけを配列で返す。保存済みデータから毎回再計算。
+function checkAchievements() {
+  const primes = [...discoveredPrimes].sort((a, b) => a - b);
+  const results = [];
+
+  // 1〜3桁制覇。各桁の素数を全て発見したときに1枚ずつ獲得。
+  for (const [digits, allPrimes] of PRIMES_BY_DIGITS) {
+    if (allPrimes.every(n => discoveredPrimes.has(n))) {
+      results.push(badge(`digits-${digits}`, `${digits}桁マスター`,
+        `${digits}桁の素数${allPrimes.length}個をすべて発見！`, "🏅", digits, "digits"));
+    }
+  }
+
+  // 10、100、1000... と、それぞれ独立したバッジを獲得。
+  for (let threshold = 10; threshold <= primes.length; threshold *= 10) {
+    results.push(badge(`collector-${threshold}`, `素数${threshold}個`,
+      `異なる素数を${threshold}個発見！`, "🔎", threshold, "collector"));
+    if (threshold > Number.MAX_SAFE_INTEGER / 10) break;
+  }
+
+  const palindromeCount = primes.filter(isPalindromePrime).length;
+  const emirpCount = primes.filter(isEmirp).length;
+  for (let count = 10; count <= palindromeCount; count += 10) {
+    results.push(badge(`palindrome-${count}`, `回文素数${count}個`,
+      `回文素数を${count}個発見！`, "🍅", count, "palindrome"));
+  }
+  for (let count = 10; count <= emirpCount; count += 10) {
+    results.push(badge(`emirp-${count}`, `Emirp ${count}個`,
+      `Emirp（逆から読んでも別の素数）を${count}個発見！`, "EMIRP", count, "emirp"));
+  }
+
+  const mersenneCount = primes.filter(isMersennePrime).length;
+  // メルセンヌ・素数ペアは、現時点の発見個数を1枚のバッジで表示。
+  if (mersenneCount) results.push(badge("mersenne", "メルセンヌ素数",
+    `メルセンヌ素数を${mersenneCount}個発見！`, "MERSENNE", mersenneCount, "mersenne"));
+
+  const twinCount = countPrimeGroups(primes, [0, 2]);
+  const tripletCount = countTriplets(primes);
+  const quadrupletCount = countPrimeGroups(primes, [0, 2, 6, 8]);
+  if (twinCount) results.push(badge("twin", "双子素数",
+    `双子素数を${twinCount}組発見！`, "🐣🐣", twinCount, "group"));
+  if (tripletCount) results.push(badge("triplet", "三つ子素数",
+    `三つ子素数を${tripletCount}組発見！`, "🐣🐣🐣", tripletCount, "group"));
+  if (quadrupletCount) results.push(badge("quadruplet", "四つ子素数",
+    `四つ子素数を${quadrupletCount}組発見！`, "🍀", quadrupletCount, "group"));
+  return results;
+}
+
+function renderAchievements(achievements = checkAchievements()) {
   const $list = $("#achievementList").empty();
-  // 【変更】未達成の実績は表示しない。達成済みだけを一覧にする。
-  const unlockedAchievements = ACHIEVEMENTS.filter(a => achieved[a.id]);
-  $("#achievementEmpty").toggle(unlockedAchievements.length === 0);
-  unlockedAchievements.forEach(a => {
-    const $item = $("<li>").addClass("achievement-card unlocked");
-    $item.append($("<span>").addClass("achievement-icon").text("🏆"));
-    const $details = $("<div>");
-    $details.append($("<strong>").text(a.title));
-    $details.append($("<small>").text(a.description));
-    $item.append($details);
+  $("#achievementEmpty").toggle(achievements.length === 0);
+  achievements.forEach(a => {
+    // buttonにすることでhoverに加えてタップ・キーボードでも詳細を表示。
+    const $item = $("<li>").addClass("achievement-badge-item");
+    const $button = $("<button>").attr({ type: "button", "aria-label": `${a.title}：${a.description}`, title: a.description })
+      .addClass(`achievement-badge badge-${a.category}`);
+    const $icon = $("<span>").addClass("badge-symbol").text(a.icon);
+    if (a.category === "emirp") $icon.addClass("mirror-word");
+    $button.append($icon);
+    $button.append($("<span>").addClass("badge-number").text(a.number));
+    $button.append($("<span>").addClass("badge-tooltip").text(a.description));
+    $item.append($button);
     $list.append($item);
   });
 }
