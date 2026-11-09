@@ -115,6 +115,23 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); }
 }
 .achievement-badge:hover .badge-tooltip,
 .achievement-badge:focus .badge-tooltip { display: block; }
+/* Achievementのツールチップをカード内に収める */
+
+/* 左端のバッジ：左側を基準に配置 */
+.achievement-badge-item:nth-child(3n + 1) .badge-tooltip {
+  left: 0;
+  transform: none;
+}
+
+/* 右端のバッジ：右側を基準に配置 */
+.achievement-badge-item:nth-child(3n) .badge-tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+/* 中央のバッジは従来どおり中央揃え */
+
 /* スマホのタップ後にfocusが残る間も説明を表示できる。 */
 @media (max-width: 650px) {
   .achievement-list { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
