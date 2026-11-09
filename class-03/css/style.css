@@ -48,3 +48,74 @@ h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); }
   #result.result-normal { font-size: 1.1rem; }
 }
 @media (max-width: 480px) { .input-row { flex-direction: column; } }
+
+/* ============================================================
+   【大きな変更】Achievementをカード一覧からアイコン型バッジへ変更。
+   hover / focus / タップで達成内容を表示する。
+   ============================================================ */
+.achievement-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 14px 9px;
+  padding: 10px 0 16px;
+  overflow: visible;
+}
+.achievement-badge-item { list-style: none; min-width: 0; }
+.achievement-badge {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px;
+  margin: 0 auto;
+  border: 2px solid #e2b85b;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fff9e7, #ffe8a8);
+  box-shadow: 0 3px 8px rgb(30 40 70 / 10%);
+  color: #34314b;
+  cursor: pointer;
+  font: inherit;
+}
+.achievement-badge:focus-visible { outline: 3px solid #3949ab; outline-offset: 3px; }
+.badge-symbol { font-size: 1.65rem; line-height: 1.25; white-space: nowrap; }
+.badge-number { font-size: .78rem; font-weight: 800; line-height: 1.1; }
+.badge-collector { background: linear-gradient(145deg, #eaf8ff, #c7e8ff); border-color: #83c7ee; }
+.badge-palindrome { background: linear-gradient(145deg, #fff1ef, #ffd0c8); border-color: #f1a6a0; }
+.badge-emirp { background: linear-gradient(145deg, #f4eeff, #ded1ff); border-color: #b8a0e8; }
+.badge-mersenne { background: linear-gradient(145deg, #eafbef, #c9efda); border-color: #8ccdab; }
+.badge-group { background: linear-gradient(145deg, #fff7df, #ffedbb); border-color: #edc77a; }
+.badge-emirp .badge-symbol, .badge-mersenne .badge-symbol { font-size: .63rem; font-weight: 900; letter-spacing: -.03em; }
+/* EMIRPの文字全体を鏡映。文字単位の鏡文字は将来のデザイン改善候補。 */
+.mirror-word { transform: scaleX(-1); }
+.badge-group .badge-symbol { font-size: 1.1rem; letter-spacing: -.22em; padding-right: .22em; }
+.badge-tooltip {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(250px, 80vw);
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: #252b3d;
+  color: white;
+  font-size: .75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: normal;
+  text-align: center;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 16%);
+  pointer-events: none;
+}
+.achievement-badge:hover .badge-tooltip,
+.achievement-badge:focus .badge-tooltip { display: block; }
+/* スマホのタップ後にfocusが残る間も説明を表示できる。 */
+@media (max-width: 650px) {
+  .achievement-list { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+}
