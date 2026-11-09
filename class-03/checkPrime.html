@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>素数か？</title>
+  <title>汝、素数たるや？ | Prime Collection</title>
+  <!-- 【変更】class-03/css/style.css を参照。更新時の古いCSSキャッシュを回避 -->
   <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2">
 </head>
+
 <body>
   <main class="app">
-    <h1>汝、素数たるや？</h1>
-    <div class="input-row">
-      <input type="text" id="numberInput" placeholder="数字や数式を入力" aria-label="判定したい数字や数式">
-      <button type="button" id="checkButton">チェック</button>
-    </div>
-    <p id="result" class="result-normal" aria-live="polite">ここに結果を表示</p>
-    <!-- 【追加】コレクション・Achievementの表示エリア -->
-    <div id="achievementNotice" class="achievement-notice" role="status" aria-live="polite" style="display:none"></div>
-    <section class="dashboard" aria-label="素数コレクションと実績">
-      <section class="panel" aria-labelledby="collectionTitle">
-        <div class="panel-header">
-          <h2 id="collectionTitle">MY PRIME COLLECTION</h2>
-          <span class="count-label">発見数：<strong id="collectionCount">0</strong></span>
-        </div>
-        <p id="collectionEmpty" class="muted">まだ素数がありません。最初の素数を探そう！</p>
-        <ul id="primeList" class="prime-list" aria-label="発見済みの素数"></ul>
-        <button type="button" id="resetCollection" class="reset-button">コレクションをリセット</button>
-        <p id="collectionStatus" class="muted" role="status"></p>
-      </section>
-      <section class="panel" aria-labelledby="achievementTitle">
-        <h2 id="achievementTitle">ACHIEVEMENTS</h2>
-        <ul id="achievementList" class="achievement-list"></ul>
-      </section>
+    <!-- 【変更】判定エリアを独立させ、サブコンテンツの幅に左右されず中央配置 -->
+    <section class="judge-area" aria-label="素数判定">
+      <h1>汝、素数たるや？</h1>
+      <div class="input-row">
+        <input type="text" id="numberInput" placeholder="数字や数式を入力" aria-label="判定したい数字や数式">
+        <button type="button" id="checkButton">チェック</button>
+      </div>
+      <p id="result" class="result-normal" aria-live="polite">ここに結果を表示</p>
+      <div id="achievementNotice" class="achievement-notice" role="status" aria-live="polite" style="display:none">
+      </div>
     </section>
+    <!-- 【変更】PCでは右側、狭い画面では下側。detailsで開閉可能 -->
+    <aside class="sidebar" aria-label="コレクションと実績">
+      <details class="panel" open>
+        <summary>MY PRIME COLLECTION <span class="count-label">発見数：<strong id="collectionCount">0</strong></span>
+        </summary>
+        <div class="panel-body">
+          <p id="collectionEmpty" class="muted">まだ素数がありません。最初の素数を探そう！</p>
+          <ul id="primeList" class="prime-list" aria-label="発見済みの素数"></ul>
+          <button type="button" id="resetCollection" class="reset-button">コレクションをリセット</button>
+          <p id="collectionStatus" class="muted" role="status"></p>
+        </div>
+      </details>
+      <details class="panel" open>
+        <summary>ACHIEVEMENTS</summary>
+        <div class="panel-body">
+          <p id="achievementEmpty" class="muted">まだ実績はありません。素数を発見しよう！</p>
+          <ul id="achievementList" class="achievement-list"></ul>
+        </div>
+      </details>
+    </aside>
   </main>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
+
 </html>

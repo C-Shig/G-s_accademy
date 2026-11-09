@@ -1,125 +1,50 @@
-body {
-  min-height: 100vh;
-  font-family: system-ui, sans-serif;
-  background: #f7f8fc;
-  color: #202638;
-}
-.app {
-  min-height: 100vh;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 24px;
-  text-align: center;
-}
-h1 { font-size: clamp(2rem, 5vw, 3rem); }
-.input-row { width: min(100%, 520px); display: flex; gap: 12px; }
-#numberInput {
-  flex: 1;
-  min-width: 0;
-  padding: 14px 16px;
-  border: 1px solid #b7bdca;
-  border-radius: 10px;
-  background: white;
-}
-#checkButton {
-  flex: none;
-  padding: 14px 20px;
-  border: 0;
-  border-radius: 10px;
-  color: white;
-  background: #3949ab;
-  cursor: pointer;
-}
+/* 【重要】reset.cssが未配置でも最低限のスタイルが成立するようにする */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { font-family: system-ui, sans-serif; background: #f7f8fc; color: #202638; }
+button, input { font: inherit; }
+.app { min-height: 100vh; position: relative; }
+/* 【大きな変更】メイン領域はビューポート全体を基準に中央配置。サイドバーは別レイヤー */
+.judge-area { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 26px; padding: 40px 20px; text-align: center; }
+h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); }
+.input-row { display: flex; gap: 12px; width: min(100%, 520px); }
+#numberInput { flex: 1; min-width: 0; padding: 14px 16px; border: 1px solid #b7bdca; border-radius: 10px; background: white; }
+#checkButton { flex: none; padding: 14px 20px; border: 0; border-radius: 10px; color: white; background: #3949ab; cursor: pointer; }
 #checkButton:hover { background: #283593; }
-
-/* 【大きな変更】共通の結果表示領域。文字サイズは各クラスに任せる。 */
-#result {
-  min-height: 3em;
-  text-align: center;
-}
-
-/* 注意文・通常の判定結果は、常に標準サイズで表示する。 */
-#result.result-normal {
-  width: min(100%, 90vw);
-  max-width: 90vw;
-  font-size: 1.5rem;
-  line-height: 1.6;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
-
-/* 【大きな変更】素数発見時だけ横幅を文字列に合わせて拡張する。
-   長い2行目も途中で折り返さず、左右均等にはみ出させる。 */
-#result.result-prime {
-  position: relative;
-  left: 50%;
-  translate: -50% 0;
-  align-self: flex-start;
-  width: max-content;
-  max-width: none;
-  white-space: pre;
-  overflow-wrap: normal;
-  line-height: 1.2;
-  font-weight: 700;
-}
-.result-prime .prime-number {
-  font-size: 1.2em;
-}
-@media (max-width: 480px) {
-  .input-row { flex-direction: column; }
-}
-
-
-/* ============================================================
-   【追加】PC版：コレクションとAchievement
-   既存の入力・判定表示は維持し、新しいカードだけを追加する。
-   ============================================================ */
-* { box-sizing: border-box; }
-.dashboard {
-  width: min(100%, 960px);
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 20px;
-  text-align: left;
-}
-.panel {
-  min-width: 0;
-  padding: 24px;
-  background: white;
-  border: 1px solid #e0e4ee;
-  border-radius: 18px;
-  box-shadow: 0 6px 24px rgb(32 38 56 / 6%);
-}
-.panel h2 { font-size: 1.05rem; letter-spacing: .05em; }
-.panel-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.count-label { font-size: .9rem; }
-.muted { color: #687286; font-size: .9rem; line-height: 1.6; margin-top: 12px; }
-.prime-list { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 18px 0; max-height: 260px; overflow-y: auto; }
-.prime-chip { background: #e8ebfa; color: #293b90; border-radius: 10px; padding: 9px 13px; font-weight: 700; overflow-wrap: anywhere; }
-.reset-button { padding: 10px 14px; border: 1px solid #c4cad7; border-radius: 9px; background: white; color: #39445b; cursor: pointer; }
+#result { margin: 0; min-height: 3em; text-align: center; }
+#result.result-normal { width: min(100%, 90vw); font-size: 1.5rem; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+/* 【変更】中央寄せを維持しつつ、長い素数演出で画面外へはみ出さない */
+#result.result-prime { width: 100%; font-size: clamp(1.7rem, 5vw, 5rem); font-weight: 700; line-height: 1.2; white-space: pre-line; overflow-wrap: anywhere; }
+.result-prime .prime-number { font-size: 1.2em; }
+.achievement-notice { max-width: min(90vw, 720px); padding: 14px 18px; border-radius: 12px; background: #fff1b9; font-weight: 700; }
+/* 【大きな変更】サブコンテンツは画面右に独立配置。メインの中央位置を動かさない */
+.sidebar { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: min(300px, 25vw); max-height: calc(100vh - 36px); overflow-y: auto; display: grid; gap: 14px; z-index: 2; }
+.panel { min-width: 0; background: rgba(255,255,255,.97); border: 1px solid #e0e4ee; border-radius: 15px; box-shadow: 0 6px 24px rgb(32 38 56 / 8%); text-align: left; }
+.panel summary { cursor: pointer; padding: 15px; font-size: .85rem; font-weight: 750; letter-spacing: .03em; }
+.panel summary::marker { color: #3949ab; }
+.panel-body { padding: 0 15px 16px; }
+.count-label { display: block; font-size: .78rem; font-weight: 400; margin-top: 5px; }
+.muted { color: #687286; font-size: .82rem; line-height: 1.6; }
+.prime-list, .achievement-list { list-style: none; padding: 0; margin: 12px 0; }
+.prime-list { display: flex; flex-wrap: wrap; gap: 7px; max-height: 150px; overflow-y: auto; }
+.prime-chip { background: #e8ebfa; color: #293b90; border-radius: 8px; padding: 7px 10px; font-weight: 700; font-size: .85rem; overflow-wrap: anywhere; }
+.reset-button { padding: 9px 12px; border: 1px solid #c4cad7; border-radius: 8px; background: white; color: #39445b; cursor: pointer; font-size: .8rem; }
 .reset-button:hover { background: #f2f3f8; }
-.achievement-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 10px; }
-.achievement-card { display: flex; gap: 12px; align-items: center; padding: 12px; border: 1px solid #e0e4ee; border-radius: 12px; background: #f4f5f8; color: #697183; }
-.achievement-card.unlocked { background: #fff8df; border-color: #e9cb72; color: #40391d; }
-.achievement-icon { font-size: 1.4rem; }
+.achievement-list { display: grid; gap: 8px; }
+.achievement-card { display: flex; gap: 9px; align-items: center; padding: 10px; border: 1px solid #e9cb72; border-radius: 10px; background: #fff8df; }
+.achievement-icon { font-size: 1.2rem; }
 .achievement-card strong, .achievement-card small { display: block; }
-.achievement-card strong { font-size: .88rem; overflow-wrap: anywhere; }
-.achievement-card small { font-size: .78rem; margin-top: 4px; }
-.achievement-notice { width: min(100%, 760px); padding: 14px; border-radius: 12px; background: #fff1b9; font-weight: 700; }
-/* 【追加】既存の大きな素数アニメーションが横スクロールを生まないようにする。
-   PCでも長い数値は画面幅に応じて文字サイズを抑える。 */
-#result.result-prime { font-size: clamp(1.2rem, 5vw, 4rem) !important; }
-@media (max-width: 760px) {
-  .dashboard { grid-template-columns: 1fr; }
-  .panel { padding: 18px; }
-  #result.result-prime { white-space: pre-wrap; width: 100%; left: 0; translate: none; align-self: center; overflow-wrap: anywhere; }
+.achievement-card strong { font-size: .78rem; overflow-wrap: anywhere; }
+.achievement-card small { margin-top: 4px; font-size: .74rem; }
+/* 【変更】狭いPC・タブレット・スマホではサブコンテンツを下に移動 */
+@media (max-width: 1100px) {
+  .judge-area { min-height: 75vh; }
+  .sidebar { position: static; transform: none; width: min(100% - 32px, 760px); max-height: none; margin: 0 auto 32px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 480px) {
-  .app { padding: 28px 14px; gap: 20px; }
-  .input-row { width: 100%; }
+@media (max-width: 650px) {
+  .judge-area { min-height: 70vh; gap: 22px; padding: 28px 14px; }
+  .sidebar { grid-template-columns: 1fr; }
+  #result.result-prime { font-size: clamp(1.4rem, 7vw, 2.8rem); }
   #result.result-normal { font-size: 1.1rem; }
-  #result.result-prime { font-size: 1.4rem !important; }
 }
+@media (max-width: 480px) { .input-row { flex-direction: column; } }

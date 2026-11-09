@@ -165,11 +165,11 @@ function showPrime(number) {
     .stop(true, true)
     .removeClass("result-normal")
     .addClass("result-prime")
-    .css({ opacity: 0, fontSize: "2rem", transform: "", whiteSpace: "" })
+    .css({ opacity: 0, fontSize: "", transform: "", whiteSpace: "" })
     .empty()
     .append($("<span>").addClass("prime-number").text(number))
     .append(document.createTextNode(" は\n素数だぁぁぁぁぁあ！"))
-    .animate({ opacity: 1, fontSize: "6rem" }, 900);
+    .animate({ opacity: 1 }, 900); // 【変更】文字サイズはCSSで制御し、中央配置とレスポンシブを維持
 }
 
 // checkPrime()は各処理を呼ぶ司令塔
@@ -299,10 +299,12 @@ function checkAchievements() {
 function renderAchievements() {
   const achieved = checkAchievements();
   const $list = $("#achievementList").empty();
-  ACHIEVEMENTS.forEach(a => {
-    const unlocked = achieved[a.id];
-    const $item = $("<li>").addClass("achievement-card").toggleClass("unlocked", unlocked);
-    $item.append($("<span>").addClass("achievement-icon").text(unlocked ? "🏆" : "🔒"));
+  // 【変更】未達成の実績は表示しない。達成済みだけを一覧にする。
+  const unlockedAchievements = ACHIEVEMENTS.filter(a => achieved[a.id]);
+  $("#achievementEmpty").toggle(unlockedAchievements.length === 0);
+  unlockedAchievements.forEach(a => {
+    const $item = $("<li>").addClass("achievement-card unlocked");
+    $item.append($("<span>").addClass("achievement-icon").text("🏆"));
     const $details = $("<div>");
     $details.append($("<strong>").text(a.title));
     $details.append($("<small>").text(a.description));
