@@ -5,6 +5,8 @@ let selected = [];
 let answers = [];
 let graded = false;
 let generatedAt = "";
+
+// まちがいリストから、問題リストを制作
 function makeList() {
   const count = Number($("#count").value),
     all = mistakes();
@@ -27,6 +29,8 @@ function makeList() {
   render();
   console.log("[MasuCal] まちがいなおし問題数:", selected.length);
 }
+
+// 最初の問題の解答欄にカーソルをおく
 function focusAnswer(i) {
   const el = $(`#wrongQuestions input[data-index="${i}"]`);
   if (el) {
@@ -34,6 +38,7 @@ function focusAnswer(i) {
     el.select();
   }
 }
+// 次への設定
 function advance(i) {
   if (i < selected.length - 1) {
     focusAnswer(i + 1);
@@ -43,6 +48,7 @@ function advance(i) {
   if (first !== -1) focusAnswer(first);
   else $("#grade").focus();
 }
+// 印刷設定
 function render() {
   const box = $("#wrongQuestions");
   box.replaceChildren();
@@ -82,6 +88,7 @@ function render() {
     box.append(line);
   });
 }
+// 採点
 function grade() {
   if (graded || !selected.length) return;
   graded = true;
@@ -98,6 +105,8 @@ function grade() {
     total: selected.length,
   });
 }
+
+// まちがいリストから、やり直しで正解したものを消す
 function deleteCorrect() {
   if (!graded) return;
   const targets = selected.filter((m, i) =>
@@ -119,8 +128,11 @@ function deleteCorrect() {
     `正解した${targets.length}件を削除しました。残り${next.length}件です。`;
   logMistakeCount();
 }
+// 作成ボタンで作成
 $("#generate").addEventListener("click", makeList);
+// 採点ボタンで採点
 $("#grade").addEventListener("click", grade);
+// まちがいリストから正解を消すボタンで消す
 $("#deleteCorrect").addEventListener("click", deleteCorrect);
 function buildPrintPages() {
   const holder = $("#printPages");
@@ -158,9 +170,8 @@ function buildPrintPages() {
     holder.append(page);
   }
 }
-$("#print").addEventListener("click", () => {
-  buildPrintPages();
-  window.print();
-});
+// 印刷機能は後日実装する 2026.11.17
+// $('#print').addEventListener('click', () => { buildPrintPages();window.print();});
+//
 makeList();
 logMistakeCount();

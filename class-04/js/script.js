@@ -15,6 +15,8 @@ function setSize(size) {
   COL_COUNT = size;
   TOTAL_CELLS = ROW_COUNT * COL_COUNT;
 }
+
+// 設定のよみとり
 function settingsFromForm() {
   let min = Number($("#min").value),
     max = Number($("#max").value);
@@ -39,6 +41,8 @@ function settingsFromForm() {
     throw Error(`割り算の横見出しには0以外の数字が${size}個必要です。`);
   return {min, max, op, order, size};
 }
+
+// 設定の反映だったかな
 function applySettings(s) {
   $("#min").value = s.min;
   $("#max").value = s.max;
@@ -46,6 +50,9 @@ function applySettings(s) {
   $(`input[name="op"][value="${s.op}"]`).checked = true;
   $(`input[name="order"][value="${s.order}"]`).checked = true;
 }
+
+// -----要素が重複しない、縦横の配列をつくる-----
+// 最大値と最小値から、縦・横の長さと同じ長さの、ランダムor昇順配列をつくる
 function pickUnique(s, excludeZero = false) {
   const pool = [];
   for (let n = s.min; n <= s.max; n++)
@@ -58,6 +65,7 @@ function pickUnique(s, excludeZero = false) {
   const selected = pool.slice(0, s.size);
   return s.order === "asc" ? selected.sort((a, b) => a - b) : selected;
 }
+// pickUniqueで作った配列の、縦・横見出しと同じ数の要素を冒頭から取る
 function generate(s) {
   setSize(s.size);
   const rows = pickUnique(s),
@@ -71,9 +79,13 @@ function generate(s) {
     createdAt: new Date().toISOString(),
   };
 }
+
+// 保存配列
 function save() {
   saveJSON(STORAGE_KEY, state);
 }
+
+// 問題作成（縦横見出し配列の数値と、ランダムか昇順かの設定を保管
 function makeProblem(s) {
   try {
     state = generate(s);
@@ -90,6 +102,8 @@ function makeProblem(s) {
     $("#error").textContent = e.message;
   }
 }
+
+// 問題のテーブル（25マス）作成
 function makeBoard(target, mode) {
   const table = document.createElement("table");
   table.className = "board";
@@ -152,6 +166,8 @@ function makeBoard(target, mode) {
   });
   $(target).replaceChildren(table);
 }
+
+// 入力セル設定
 function focusCell(i) {
   activeIndex = i;
   const el = $(`#board input[data-index="${i}"]`);
@@ -160,6 +176,8 @@ function focusCell(i) {
     el.select();
   }
 }
+
+// すべて入力したら、次で確定ボタンへ。未入力があれば、最後から最初のみ入力セルに戻る
 function advance(i) {
   if (state.graded) return;
   if (i < TOTAL_CELLS - 1) {
@@ -170,20 +188,26 @@ function advance(i) {
   if (empty !== -1) focusCell(empty);
   else $("#grade").focus();
 }
+
+// 印刷等設定
 function render() {
   applySettings(state.settings);
   $("#opLabel").textContent = opSymbol(state.settings.op);
   $("#operationHint").textContent =
     `左の数 ${opSymbol(state.settings.op)} 上の数 = ?`;
+  // 印刷用満点スコア更新
   $("#printTotal").textContent = TOTAL_CELLS;
+  // コメント用の◯x◯マスの数値更新
   $("#gridLabel").textContent =
-    `${ROW_COUNT} × ${COL_COUNT} の計算で、正確さを磨こう。`;
+    `${ROW_COUNT} × ${COL_COUNT} マスに挑戦！たくさん計算練習して、正確さとスピードをみがこう。`;
   makeBoard("#board", "input");
   $("#grade").disabled = state.graded;
   if (state.graded) showResults();
   else $("#results").hidden = true;
   renderReview();
 }
+
+// スコア計算
 function grade() {
   if (!state || state.graded) return;
   state.graded = true;
@@ -212,6 +236,8 @@ function grade() {
   render();
   $("#results").scrollIntoView({behavior: "smooth"});
 }
+
+// 結果表示
 function showResults() {
   let correct = 0;
   state.rows.forEach((r, ri) =>
@@ -228,6 +254,8 @@ function showResults() {
   makeBoard("#keyBoard", "key");
   $("#results").hidden = false;
 }
+
+// 印刷プレビュー
 function renderReview() {
   const all = mistakes();
   $("#review").hidden = all.length === 0;
@@ -245,6 +273,8 @@ function renderReview() {
       list.append(item);
     });
 }
+
+// 問題作成（ボタンで発動）
 $("#create").addEventListener("click", () => {
   try {
     makeProblem(settingsFromForm());
@@ -252,6 +282,7 @@ $("#create").addEventListener("click", () => {
     $("#error").textContent = e.message;
   }
 });
+// 問題再作成（ボタンで発動）
 $("#remake").addEventListener("click", () => {
   try {
     makeProblem(settingsFromForm());
@@ -259,12 +290,17 @@ $("#remake").addEventListener("click", () => {
     $("#error").textContent = e.message;
   }
 });
+// 次へボタン
 $("#next").addEventListener("click", () => advance(activeIndex));
+// 戻るボタン
 $("#prev").addEventListener("click", () =>
   focusCell(Math.max(0, activeIndex - 1)),
 );
+// 回答送信
 $("#grade").addEventListener("click", grade);
+// 新しい問題へ
 $("#retry").addEventListener("click", () => makeProblem(state.settings));
+// まちがいリストの全削除
 $("#clearMistakes").addEventListener("click", () => {
   if (confirm("保存した間違いをすべて削除しますか？")) {
     localStorage.removeItem(MISTAKES_KEY);
@@ -272,6 +308,9 @@ $("#clearMistakes").addEventListener("click", () => {
     logMistakeCount();
   }
 });
+
+// ----印刷系----
+// 印刷用関数
 function printMode(results) {
   document.body.classList.toggle("print-results", results);
   document.body.classList.toggle("print-blank", !results);
@@ -282,17 +321,25 @@ function printMode(results) {
   el.hidden = hidden;
   document.body.classList.remove("print-results", "print-blank");
 }
+// 問題のみ印刷
 $("#printBlank").addEventListener("click", () => printMode(false));
+// 結果も印刷
 $("#printResults").addEventListener("click", () => printMode(true));
 function applyTheme(theme) {
   document.body.classList.toggle("mono", theme === "mono");
   $("#theme").checked = theme === "mono";
   localStorage.setItem(THEME_KEY, theme);
 }
+
+// カラーモード
 $("#theme").addEventListener("change", function () {
   applyTheme(this.checked ? "mono" : "color");
 });
 applyTheme(localStorage.getItem(THEME_KEY) || "color");
+// THEME_KEYを増やすといろんなカラーモードを増やせる
+// いまのところカラーとモノクロ
+
+// 解いた結果の保存
 const restored = readJSON(STORAGE_KEY, null);
 if (
   restored &&
@@ -308,8 +355,18 @@ if (
   state = restored;
   state.settings.size = state.rows.length;
   setSize(state.rows.length);
+  // 追加：採点済みでも全回答が未入力なら、未採点状態に戻す
+  if (state.graded && state.answers.every((answer) => answer === null)) {
+    state.graded = false;
+    save();
+    console.log("全回答が未入力のため、未採点状態に戻しました。");
+  }
   render();
-  if (!state.graded) focusCell(0);
+  // 未採点の場合は最初の入力セルを選択
+  if (!state.graded) {
+    focusCell(0);
+  }
 } else makeProblem(initialSettings);
+
 // 誤答履歴の件数を確認するには、開発者ツールのConsoleで logMistakeCount() を実行。
 logMistakeCount();
