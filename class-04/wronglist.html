@@ -1,57 +1,92 @@
+<!-- @format -->
+
 <!doctype html>
 <html lang="ja">
-
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>まちがいなおし｜MasuCal</title>
-	<link rel="stylesheet" href="css/reset.css">
-	<link rel="stylesheet" href="css/style.css">
-</head>
-
-<body class="wrong-page">
-	<!-- 保存したまちがいの数は、consoleにlogMistakeCount();と入力すると取得できます。 -->
-	<main class="shell">
-		<header>
-			<p class="eyebrow">MATH LAB / REVIEW</p>
-			<h1>Masu<span>Cal</span></h1>
-			<p>まちがいなおし</p>
-		</header>
-
-		<section class="panel">
-			<div class="wrong-meta">
-				<span>生成日時：<strong id="generatedAt"></strong></span>
-				<span>なまえ：________________</span>
-				<span>点数：______ / <strong id="fullScore">0</strong></span>
-			</div>
-
-			<div class="wrong-controls">
-				<label for="count">問題数</label>
-				<!-- プルダウン -->
-				<select id="count">
-					<option value="10">10問</option>
-					<option value="20" selected>20問</option>
-					<option value="50">50問</option>
-					<option value="100">100問</option>
-				</select>
-				<button id="generate" class="secondary">問題を作成</button>
-				<!-- 印刷機能は後日修正予定
-				<button id="print" class="secondary">印刷 / PDF</button>
-				 -->
-				<a class="button-link secondary" href="index.html" target="masucal_main">計算問題へ戻る</a>
-			</div>
-			<p id="message" class="hint" aria-live="polite"></p>
-			<div id="wrongQuestions" class="wrong-questions"></div>
-			<div id="printPages" class="print-pages"></div>
-			<div class="buttons wrong-actions"><button id="grade" class="primary">回答・採点</button><button id="deleteCorrect"
-					class="secondary" hidden>正解した問題をまちがいリストから消す</button></div>
-			<p id="score" class="wrong-score" aria-live="polite"></p>
-			<p class="hint">Enterで次へ。空欄は飛ばせます。Tab / Shift+Tabはブラウザ標準の移動操作です。</p>
-		</section>
-		<footer>MasuCal / LEARN BY DOING</footer>
-	</main>
-	<script src="js/common.js"></script>
-	<script src="js/wronglist.js"></script>
-</body>
-
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1" />
+    <title>まちがいなおし｜MasuCal</title>
+    <link
+      rel="stylesheet"
+      href="css/reset.css" />
+    <link
+      rel="stylesheet"
+      href="css/style.css" />
+  </head>
+  <body class="wrong-page">
+    <main class="shell">
+      <header>
+        <p class="eyebrow">MATH LAB / REVIEW</p>
+        <h1>Masu<span>Cal</span></h1>
+        <p>まちがいなおし</p>
+      </header>
+      <section class="panel">
+        <div class="wrong-meta">
+          <span>生成日時：<strong id="generatedAt"></strong></span
+          ><span>氏名：________________</span
+          ><span>点数：______ / <strong id="fullScore">0</strong></span>
+        </div>
+        <div class="wrong-controls">
+          <label for="count">問題数</label
+          ><select id="count">
+            <option value="10">10問</option>
+            <option
+              value="20"
+              selected>
+              20問
+            </option>
+            <option value="50">50問</option>
+            <option value="100">100問</option></select
+          ><button
+            id="generate"
+            class="secondary">
+            問題を作成</button
+          ><button
+            id="print"
+            class="secondary">
+            印刷 / PDF</button
+          ><a
+            class="button-link secondary"
+            href="index.html"
+            >計算問題へ戻る</a
+          >
+        </div>
+        <p
+          id="message"
+          class="hint"
+          aria-live="polite"></p>
+        <div
+          id="wrongQuestions"
+          class="wrong-questions"></div>
+        <div
+          id="printPages"
+          class="print-pages"></div>
+        <div class="buttons wrong-actions">
+          <button
+            id="grade"
+            class="primary">
+            回答・採点</button
+          ><button
+            id="deleteCorrect"
+            class="secondary"
+            hidden>
+            正解した問題をまちがいリストから消す
+          </button>
+        </div>
+        <p
+          id="score"
+          class="wrong-score"
+          aria-live="polite"></p>
+        <p class="hint">
+          Enterで次へ。空欄は飛ばせます。Tab /
+          Shift+Tabはブラウザ標準の移動操作です。
+        </p>
+      </section>
+      <footer>MasuCal / LEARN BY DOING</footer>
+    </main>
+    <script src="js/common.js"></script>
+    <script src="js/wronglist.js"></script>
+  </body>
 </html>
