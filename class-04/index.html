@@ -13,7 +13,6 @@
 
 <body>
   <main class="shell">
-
     <!-- タイトルヘッダーここから -->
     <header>
       <p class="eyebrow">MATH LAB / 練習問題</p>
@@ -21,7 +20,6 @@
       <p><span id="gridLabel">計算で、正確さを磨こう。</span></p>
     </header>
 
-    
     <div class="layout">
       <!-- 設定パネルここから -->
       <section class="panel settings">
@@ -50,8 +48,8 @@
         <fieldset>
           <legend>計算の種類</legend>
           <div class="choices" id="operations">
-            <label></label>
-            <input type="radio" name="op" value="+" checked /><span>＋</span></label>
+            <label>
+              <input type="radio" name="op" value="+" checked /><span>＋</span></label>
             <label>
               <input type="radio" name="op" value="-" /><span>−</span></label>
             <label>
@@ -83,7 +81,8 @@
         <!-- 作成ボタンここ -->
         <div class="buttons">
           <button id="create" class="primary">
-            問題を作成</button>
+            問題を作成
+          </button>
           <button id="remake" class="secondary">
             同じ設定で再作成
           </button>
@@ -104,15 +103,19 @@
         </p>
         <div class="print-header">
           <span
-            class="print-brand">MasuCal</span><span>なまえ：________________</span><span>日付：____年__月__日</span><span>点数：____ /
-            <span id="printTotal">25</span></span>
+            class="print-brand">MasuCal</span><span>なまえ：________________</span><span>日付：____年__月__日</span><span>点数：____
+            / <span id="printTotal">25</span></span>
         </div>
         <div class="board-scroll">
           <div id="board"></div>
         </div>
         <div class="nav">
-          <button id="prev" class="secondary">← 戻る</button>
-          <button id="next" class="secondary"> 次へ →</button>
+          <button id="prev" class="secondary">
+            ← 戻る
+          </button>
+          <button id="next" class="secondary">
+            次へ →
+          </button>
         </div>
         <div class="buttons">
           <a class="button-link secondary" href="wronglist.html">まちがいなおし</a><button id="grade" class="primary">
@@ -149,8 +152,12 @@
         </div>
       </div>
       <div class="buttons">
-        <button id="printResults" class="secondary">結果を印刷 / PDF</button>
-        <button id="retry" class="primary"> 新しい問題へ</button>
+        <button id="printResults" class="secondary">
+          結果を印刷 / PDF
+        </button>
+        <button id="retry" class="primary">
+          新しい問題へ
+        </button>
       </div>
     </section>
     <!-- Resultパネルここまで -->
@@ -158,11 +165,31 @@
     <!-- Reviewパネルここから -->
     <section id="review" class="panel" hidden>
       <h2>04 <span>REVIEW</span></h2>
-      <p id="reviewSummary"></p>
+      <select id="reviewLimit">
+        <option value="10">10件</option>
+        <option value="20" selected>20件</option>
+        <option value="50">50件</option>
+        <option value="100">100件</option>
+        <option value="all">すべて</option>
+      </select>
+      <!-- radio btn zone -->
+      <div class="review-controls">
+        <label>
+          <input type="checkbox" id="showExpected" />
+          模範解答を表示
+        </label>
+        <label>
+          <input type="checkbox" id="showActual" />
+          自分の回答を表示
+        </label>
+      </div>
+      <!-- まちがい一覧 -->
       <div id="reviewItems" class="review-items"></div>
       <div class="buttons">
         <a class="button-link primary" href="wronglist.html">まちがいなおし</a>
-        <button id="clearMistakes" class="secondary">保存した間違いを削除</button>
+        <button id="clearMistakes" class="secondary">
+          保存した間違いを削除
+        </button>
       </div>
     </section>
     <!-- Reviewここまで -->

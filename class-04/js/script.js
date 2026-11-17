@@ -255,7 +255,7 @@ function showResults() {
   $("#results").hidden = false;
 }
 
-// 印刷プレビュー
+// Reviewの印刷
 function renderReview() {
   const all = mistakes();
   $("#review").hidden = all.length === 0;
