@@ -12,7 +12,7 @@
 </head>
 
 <body>
-  <!-- 誤答履歴の件数を確認するには、開発者ツールのConsoleで logMistakeCount() を実行。 -->
+  <!-- まちがいリストの件数を確認するには、開発者ツールのConsoleで logMistakeCount(); を実行。 -->
   <main class="shell">
     <!-- タイトルヘッダーここから -->
     <header>
@@ -119,7 +119,7 @@
           </button>
         </div>
         <div class="buttons">
-          <a class="button-link secondary" href="wronglist.html">まちがいなおし</a><button id="grade" class="primary">
+          <a class="button-link secondary" href="wronglist.html" target="wronglist">まちがいなおし</a><button id="grade" class="primary">
             回答・採点</button><button id="printBlank" class="secondary">
             問題を印刷 / PDF
           </button>
@@ -196,7 +196,7 @@
         <div id="reviewItems" class="review-items"></div>
 
         <div class="buttons">
-          <a class="button-link primary" href="wronglist.html">
+          <a class="button-link primary" href="wronglist.html" target="wronglist">
             まちがいなおし
           </a>
           <button id="clearMistakes" class="secondary">

@@ -1,6 +1,10 @@
 /** @format */
 
 "use strict";
+
+// index.htmlを表示しているタブに名前を付ける
+window.name = "masucal";
+
 // ===== 正方形マスの配列長 =====
 // ROW_COUNT = 縦見出しの個数、COL_COUNT = 横見出しの個数。必ず同じ数。
 // TOTAL_CELLS = ROW_COUNT * COL_COUNT（例: 5 × 5 = 25問）。

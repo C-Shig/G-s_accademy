@@ -1,6 +1,9 @@
 /** @format */
 
 "use strict";
+// wronglist.htmlを表示しているタブに名前を付ける
+window.name = "wronglist";
+
 let selected = [];
 let answers = [];
 let graded = false;

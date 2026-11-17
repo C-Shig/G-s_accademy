@@ -16,6 +16,7 @@
       href="css/style.css" />
   </head>
   <body class="wrong-page">
+    <!-- まちがいリストの全件数を確認するには、開発者ツールのConsoleで logMistakeCount(); を実行。 -->
     <main class="shell">
       <header>
         <p class="eyebrow">MATH LAB / やりなおしチャレンジ</p>
@@ -34,12 +35,19 @@
           <label for="count">問題数</label>
           <select id="count">
             <option value="10">10問</option>
-            <option value="20" selected>20問</option>
+            <option
+              value="20"
+              selected>
+              20問
+            </option>
             <option value="50">50問</option>
             <option value="100">100問</option>
           </select>
-          <button id="generate"  class="secondary">
-            問題を作成</button>
+          <button
+            id="generate"
+            class="secondary">
+            問題を作成
+          </button>
           <!--
           <button
             id="print"
@@ -48,8 +56,10 @@
           -->
           <a
             class="button-link secondary"
-            href="index.html">
-            計算問題へ戻る</a>
+            href="index.html"
+            target="masucal">
+            計算問題へ戻る</a
+          >
         </div>
         <p
           id="message"
