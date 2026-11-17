@@ -12,6 +12,7 @@
 </head>
 
 <body>
+  <!-- 誤答履歴の件数を確認するには、開発者ツールのConsoleで logMistakeCount() を実行。 -->
   <main class="shell">
     <!-- タイトルヘッダーここから -->
     <header>
@@ -165,32 +166,44 @@
     <!-- Reviewパネルここから -->
     <section id="review" class="panel" hidden>
       <h2>04 <span>REVIEW</span></h2>
-      <select id="reviewLimit">
-        <option value="10">10件</option>
-        <option value="20" selected>20件</option>
-        <option value="50">50件</option>
-        <option value="100">100件</option>
-        <option value="all">すべて</option>
-      </select>
-      <!-- radio btn zone -->
-      <div class="review-controls">
-        <label>
-          <input type="checkbox" id="showExpected" />
-          模範解答を表示
-        </label>
-        <label>
-          <input type="checkbox" id="showActual" />
-          自分の回答を表示
-        </label>
-      </div>
-      <!-- まちがい一覧 -->
-      <div id="reviewItems" class="review-items"></div>
-      <div class="buttons">
-        <a class="button-link primary" href="wronglist.html">まちがいなおし</a>
-        <button id="clearMistakes" class="secondary">
-          保存した間違いを削除
-        </button>
-      </div>
+
+      <details id="reviewDetails" open>
+        <summary>保存した間違いを確認する</summary>
+
+        <p id="reviewSummary"></p>
+
+        <div class="review-controls">
+          <label for="reviewLimit">表示件数：</label>
+          <select id="reviewLimit">
+            <option value="10">10件</option>
+            <option value="20" selected>20件</option>
+            <option value="50">50件</option>
+            <option value="100">100件</option>
+            <option value="all">すべて</option>
+          </select>
+
+          <label>
+            <input type="checkbox" id="showExpected" />
+            模範解答を表示
+          </label>
+
+          <label>
+            <input type="checkbox" id="showActual" />
+            自分の回答を表示
+          </label>
+        </div>
+
+        <div id="reviewItems" class="review-items"></div>
+
+        <div class="buttons">
+          <a class="button-link primary" href="wronglist.html">
+            まちがいなおし
+          </a>
+          <button id="clearMistakes" class="secondary">
+            保存した間違いを削除
+          </button>
+        </div>
+      </details>
     </section>
     <!-- Reviewここまで -->
 

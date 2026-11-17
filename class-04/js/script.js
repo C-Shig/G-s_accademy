@@ -255,24 +255,59 @@ function showResults() {
   $("#results").hidden = false;
 }
 
-// Reviewの印刷
+// 保存済みの間違いをReviewパネルに表示する
 function renderReview() {
   const all = mistakes();
+
+  // 間違いが0件ならReviewパネルを非表示
   $("#review").hidden = all.length === 0;
+
+  // 保存件数を表示
   $("#reviewSummary").textContent =
     `保存した間違い：${all.length}件（最大200件）`;
+
+  // 表示設定を取得
+  const showExpected = $("#showExpected").checked;
+  const showActual = $("#showActual").checked;
+  const limitValue = $("#reviewLimit").value;
+
+  // 表示件数を決定
+  const limit = limitValue === "all" ? all.length : Number(limitValue);
+
+  // 一覧を一度空にする
   const list = $("#reviewItems");
   list.replaceChildren();
+
+  // 新しい間違いから指定件数だけ表示
   all
-    .slice(-30)
+    .slice(-limit)
     .reverse()
     .forEach((m) => {
       const item = document.createElement("div");
       item.className = "review-item";
-      item.textContent = `${m.row} ${opSymbol(m.op)} ${m.col} = ${m.expected}（回答：${m.actual === null ? "未入力" : m.actual}）`;
+
+      // 問題文は常に表示
+      const expression = `${m.row} ${opSymbol(m.op)} ${m.col} = □`;
+
+      // チェック時だけ模範解答を表示
+      const expectedTextPart = showExpected ? ` 正解：${m.expected}` : "";
+
+      // チェック時だけ自分の回答を表示
+      const actualTextPart =
+        showActual ?
+          `（回答：${m.actual == null || m.actual === "" ? "未入力" : m.actual}）`
+        : "";
+
+      item.textContent = expression + expectedTextPart + actualTextPart;
       list.append(item);
     });
 }
+
+// Reviewの表示設定を変更したら、一覧だけ再描画する
+$("#showExpected").addEventListener("change", renderReview);
+$("#showActual").addEventListener("change", renderReview);
+$("#reviewLimit").addEventListener("change", renderReview);
+
 
 // 問題作成（ボタンで発動）
 $("#create").addEventListener("click", () => {

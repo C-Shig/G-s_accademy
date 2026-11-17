@@ -251,6 +251,12 @@ input:focus-visible {
   font-weight: 700;
 }
 
+/* Reviewの開閉見出し */
+#reviewDetails > summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
 .review-items {
   display: flex;
   flex-wrap: wrap;
@@ -261,6 +267,25 @@ input:focus-visible {
   padding: 12px;
   border-radius: 9px;
 }
+/* Reviewの表示設定 */
+.review-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 18px;
+}
+
+.review-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-controls input {
+  accent-color: #3949ab;
+}
+
 .error {
   color: #a72341;
   font-size: 0.85rem;
